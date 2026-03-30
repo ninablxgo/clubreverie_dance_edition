@@ -23,10 +23,11 @@ body {
   flex-direction: column;
   gap: 10px;
 
-  background: rgba(0, 0, 0, 0.4);
-  padding: 20px;
-  border-radius: 20px;
-  backdrop-filter: blur(10px);
+  /* ❌ supprime ça */
+  /* background: rgba(0, 0, 0, 0.4); */
+  /* padding: 20px; */
+  /* border-radius: 20px; */
+  /* backdrop-filter: blur(10px); */
 }
 
 input, textarea {
