@@ -1,0 +1,69 @@
+body {
+  margin: 0;
+  font-family: sans-serif;
+
+  background: url("assets/fond_ecran_vertical.png") no-repeat center center;
+  background-size: cover;
+
+  height: 100vh;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.chat-box {
+  width: 80%;
+  max-width: 400px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  background: rgba(0, 0, 0, 0.4);
+  padding: 20px;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+}
+
+input, textarea {
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  font-size: 1rem;
+}
+
+textarea {
+  resize: none;
+  height: 120px;
+}
+
+button {
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+
+  background: hotpink;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+
+  transition: transform 0.1s ease, background 0.2s ease;
+}
+
+button:active {
+  transform: scale(0.95);
+  background: deeppink;
+}
+
+button.sent {
+  background: limegreen;
+}
+
+#status {
+  font-size: 0.9rem;
+  text-align: center;
+}
