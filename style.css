@@ -2,7 +2,7 @@ body {
   margin: 0;
   font-family: sans-serif;
 
-  background: url("assets/fond_ecran_vertical.png") no-repeat center center;
+  background: url("assets/fond_ecran_vertical_2.png") no-repeat center center;
   background-size: cover;
 
   height: 100vh;
@@ -23,11 +23,12 @@ body {
   flex-direction: column;
   gap: 10px;
 
-  /* ❌ supprime ça */
-  /* background: rgba(0, 0, 0, 0.4); */
-  /* padding: 20px; */
-  /* border-radius: 20px; */
-  /* backdrop-filter: blur(10px); */
+  background: rgba(0, 0, 0, 0.35);
+  padding: 20px;
+  border-radius: 20px;
+
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.2);
 }
 
 input, textarea {

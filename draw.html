@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Draw - Club Reverie</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      color: white;
+      font-family: sans-serif;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    canvas {
+      background: black;
+      touch-action: none;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .ui {
+      width: 90%;
+      max-width: 400px;
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    button {
+      flex: 1;
+      padding: 12px;
+      border-radius: 12px;
+      border: none;
+      background: hotpink;
+      color: white;
+      font-weight: bold;
+    }
+
+    button:active {
+      transform: scale(0.95);
+    }
+  </style>
+</head>
+
+<body>
+
+  <canvas id="canvas"></canvas>
+
+  <div class="ui">
+    <button onclick="clearCanvas()">CLEAR</button>
+    <button onclick="sendDrawing()">SEND ✨</button>
+  </div>
+
+<script>
+const channel = "clubreverie";
+let socket = null;
+let isConnected = false;
+
+// 🔹 canvas setup
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight * 0.8;
+}
+resizeCanvas();
+
+window.addEventListener("resize", resizeCanvas);
+
+// 🔹 dessin data
+let drawing = false;
+let strokes = [];
+let currentStroke = [];
+
+// 🔹 dessin events (mobile + souris)
+function getPos(e) {
+  if (e.touches) {
+    return {
+      x: e.touches[0].clientX,
+      y: e.touches[0].clientY
+    };
+  }
+  return {
+    x: e.clientX,
+    y: e.clientY
+  };
+}
+
+canvas.addEventListener("mousedown", startDraw);
+canvas.addEventListener("touchstart", startDraw);
+
+canvas.addEventListener("mouseup", stopDraw);
+canvas.addEventListener("touchend", stopDraw);
+
+canvas.addEventListener("mousemove", draw);
+canvas.addEventListener("touchmove", draw);
+
+function startDraw(e) {
+  drawing = true;
+  currentStroke = [];
+  strokes.push(currentStroke);
+}
+
+function stopDraw() {
+  drawing = false;
+}
+
+function draw(e) {
+  if (!drawing) return;
+
+  const pos = getPos(e);
+
+  const point = {
+    x: pos.x,
+    y: pos.y,
+    t: Date.now()
+  };
+
+  currentStroke.push(point);
+
+  // dessin visuel
+  ctx.fillStyle = "white";
+  ctx.beginPath();
+  ctx.arc(point.x, point.y, 4, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+// 🔹 clear
+function clearCanvas() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  strokes = [];
+}
+
+// 🔹 websocket
+function connect() {
+  socket = new WebSocket("wss://hack.chat/chat-ws");
+
+  socket.onopen = () => {
+    socket.send(JSON.stringify({
+      cmd: "join",
+      channel: channel,
+      nick: "drawer_" + Math.floor(Math.random()*1000)
+    }));
+
+    isConnected = true;
+  };
+}
+
+// 🔹 send drawing
+function sendDrawing() {
+  if (strokes.length === 0) return;
+
+  const data = JSON.stringify(strokes);
+
+  if (!socket || socket.readyState !== WebSocket.OPEN) {
+    connect();
+
+    socket.onopen = () => {
+      socket.send(JSON.stringify({
+        cmd: "join",
+        channel: channel,
+        nick: "drawer_" + Math.floor(Math.random()*1000)
+      }));
+
+      socket.send(JSON.stringify({
+        cmd: "chat",
+        text: "DRAW:" + data
+      }));
+    };
+
+    return;
+  }
+
+  socket.send(JSON.stringify({
+    cmd: "chat",
+    text: "DRAW:" + data
+  }));
+
+  // reset après envoi
+  clearCanvas();
+}
+
+// 🔹 init
+connect();
+</script>
+
+</body>
+</html>
